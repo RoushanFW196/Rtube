@@ -6,11 +6,21 @@ import {
   UserOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
+import { useDispatch } from "react-redux";
+import {toggleMenu} from '../../store/menuslice';
 const Header = () => {
+
+  const dispatch =useDispatch();
+
+ const toggleMenuHandler=()=>{
+   dispatch(toggleMenu())
+ }
+
+
   return (
     <div className="grid grid-flow-col p-4  shadow-md bg-cyan-300 items-center">
-      <div className="flex col-span-1 ">
-        <div style={{ width: "37px", height: "37px", fill: "currentcolor" }}>
+      <div className="flex col-span-1 cursor-pointer">
+        <div style={{ width: "37px", height: "37px", fill: "currentcolor" }} onClick={toggleMenuHandler}>
           <svg
             height="24"
             viewBox="0 0 24 24"

@@ -1,7 +1,16 @@
 import { Divider } from "antd";
 import React from "react";
+import { useSelector } from "react-redux";
 
 const SideNav = () => {
+ const isMenuOpen = useSelector((store)=>store.app.isMenuOpen)
+
+
+
+
+
+ if(!isMenuOpen) return null;
+
   return (
     <div className="col-span-1 bg-slate-300 h-auto">
       <ul>
@@ -9,14 +18,14 @@ const SideNav = () => {
         <li>Shorts</li>
         <li>Subscriptions</li>
       </ul>
-  <Divider/>
+      <Divider />
       <ul>
         <li>Library</li>
         <li>History</li>
         <li>Watch Later</li>
         <li>Liked Videos</li>
       </ul>
-  <Divider/>
+      <Divider />
       <ul>
         <li>Trending</li>
         <li>Shopping</li>
@@ -37,8 +46,7 @@ const SideNav = () => {
         <li>RTube Music</li>
         <li>RTube Kids</li>
       </ul>
-      <Divider/>
-
+      <Divider />
 
       <ul>
         <h3>Settings</h3>
@@ -46,17 +54,7 @@ const SideNav = () => {
         <li>Help</li>
         <li>Send Feedback</li>
       </ul>
-      <Divider/>
-
-
-
-
-
-
-
-
-
-
+      <Divider />
     </div>
   );
 };
