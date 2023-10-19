@@ -7,7 +7,7 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import {cachedSearch} from '../../store/searchSlice';
-import axios from "axios";
+
 import { useDispatch,useSelector } from "react-redux";
 import { toggleMenu } from "../../store/menuslice";
 const Header = () => {
