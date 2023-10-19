@@ -1,20 +1,19 @@
 import { Divider } from "antd";
 import React from "react";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const SideNav = () => {
- const isMenuOpen = useSelector((store)=>store.app.isMenuOpen)
+  const isMenuOpen = useSelector((store) => store.app.isMenuOpen);
 
-
-
-
-
- if(!isMenuOpen) return null;
+  if (!isMenuOpen) return null;
 
   return (
     <div className="col-span-1 bg-slate-300 h-auto">
       <ul>
-        <li>Home</li>
+    <Link to='/'>
+    <li>Home</li>
+    </Link>   
         <li>Shorts</li>
         <li>Subscriptions</li>
       </ul>

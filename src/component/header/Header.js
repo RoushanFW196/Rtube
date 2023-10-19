@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   MenuOutlined,
   YoutubeOutlined,
@@ -6,21 +6,51 @@ import {
   UserOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { useDispatch } from "react-redux";
-import {toggleMenu} from '../../store/menuslice';
+import {cachedSearch} from '../../store/searchSlice';
+import axios from "axios";
+import { useDispatch,useSelector } from "react-redux";
+import { toggleMenu } from "../../store/menuslice";
 const Header = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestiondata, setSuggestionData] = useState([]);
+  const [showSuggestion, setShowSuggestion] = useState(false);
+  const dispatch = useDispatch();
+  const cachedSearchdata = useSelector((store) => store.search);
+  const toggleMenuHandler = () => {
+    dispatch(toggleMenu());
+  };
 
-  const dispatch =useDispatch();
+  useEffect(() => {
+    if (cachedSearchdata[searchQuery]) {
+      setSuggestionData(cachedSearchdata[searchQuery]);
+    } else {
+      const timer = setTimeout(() => {
+        getSearchSugestions();
+      }, 200);
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [searchQuery]);
 
- const toggleMenuHandler=()=>{
-   dispatch(toggleMenu())
- }
+  const getSearchSugestions = async () => {
+    const data = await fetch(
+      `http://suggestqueries.google.com/complete/search?q=${searchQuery}&hl=en&ds=yt&&regionCode=IN&client=youtube&hjson=t&cp=1w`
+    );
+    const jsdata = await data.json();
 
+    let respdata = jsdata[1].map((el) => el[0]);
+    setSuggestionData(respdata);
+    dispatch(cachedSearch({[searchQuery]:respdata}));
+  };
 
   return (
     <div className="grid grid-flow-col p-4  shadow-md bg-cyan-300 items-center">
       <div className="flex col-span-1 cursor-pointer">
-        <div style={{ width: "37px", height: "37px", fill: "currentcolor" }} onClick={toggleMenuHandler}>
+        <div
+          style={{ width: "37px", height: "37px", fill: "currentcolor" }}
+          onClick={toggleMenuHandler}
+        >
           <svg
             height="24"
             viewBox="0 0 24 24"
@@ -51,8 +81,19 @@ const Header = () => {
       </div>
 
       <div className="flex col-span-10">
-        <input type="text" placeholder="search" className="w-1/2 border border-gray-500 rounded-l-full pl-4" />
-        <div style={{ width: "37px", height: "37px", fill: "currentcolor" }} className="border border-gray-500 rounded-r-full p-2 bg-gray-300">
+        <input
+          type="text"
+          placeholder="search"
+          className="w-1/2 border border-gray-500 rounded-l-full pl-4"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onFocus={() => setShowSuggestion(true)}
+          onBlur={() => setShowSuggestion(false)}
+        />
+        <div
+          style={{ width: "37px", height: "37px", fill: "currentcolor" }}
+          className="border border-gray-500 rounded-r-full p-2 bg-gray-300"
+        >
           <svg
             enable-background="new 0 0 24 24"
             viewBox="0 0 24 24"
@@ -82,6 +123,22 @@ const Header = () => {
           </svg>
         </div>
       </div>
+
+      {showSuggestion && (
+        <div className="w-4/12 bg-gray-100 h-[300] z-40 rounded-lg  shadow-lg fixed top-14 ml-72 content-center">
+          <ul className="divide-y divide-slate-200">
+            {suggestiondata.length > 0 &&
+              suggestiondata.map((el, ind) => (
+                <li
+                  className="px-2 m-2 hover:bg-gray-300 hover:rounded-lg "
+                  key={ind}
+                >
+                  {el}
+                </li>
+              ))}
+          </ul>
+        </div>
+      )}
 
       <div className="flex flex-row-reverse col-span-1">
         <img
